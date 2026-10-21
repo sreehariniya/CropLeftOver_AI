@@ -272,8 +272,11 @@ def page_results(user):
                 with st.spinner("..."):
                     st.session_state[ai_key] = ai_explain.explain(
                         build_ai_summary(listing, suggestions), lang)
-            except Exception:
+            except Exception as e:
+                st.session_state.pop(ai_key, None)
                 st.error(t(lang, "ai_error"))
+                with st.expander("Technical details"):
+                    st.code(ai_explain.safe_error(e))
         if st.session_state.get(ai_key):
             st.write(st.session_state[ai_key])
             st.caption("🤖 " + t(lang, "ai_disclaimer"))
